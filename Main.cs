@@ -1,3 +1,5 @@
+using System;
+
 public static class Hello
 {
 	public static void Main()
