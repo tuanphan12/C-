@@ -1,9 +1,12 @@
 using System;
 
-public static class Hello
+namespace Main
 {
-	public static void Main()
+	public static class Hello
 	{
-		Console.Write("Hello");
+		public static void Main()
+		{
+			Console.Write("Hello");
+		}
 	}
 }
