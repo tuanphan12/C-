@@ -2,7 +2,7 @@ using System;
 
 namespace Main
 {
-	public static class Hello
+	public static class Driver
 	{
 		public static void Main()
 		{
