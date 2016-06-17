@@ -7,11 +7,27 @@ namespace Main
 		public static void Main()
 		{
 			Console.Write("Hello");
+			var text = "Hey Tuna how are you";
+		}
+	}
+
+	public static class Translator
+	{
+		public static void EnglishToMorse(string text)
+		{
+			var list_of_words = text.Split(' ');
+			foreach (string word in list_of_words) 
+			{
+				foreach (char letter in word)
+				{
+					
+				}
+			}
+
 		}
 
-		public static char Translator(string MorseCode)
+		public static char Decode_Morse(string MorseCode)
 		{
-
 			switch (MorseCode)
 			{
 				case ".-":
@@ -88,6 +104,86 @@ namespace Main
 					return '0';
 				default:
 					return ' ';
+			}
+		}
+		public static string Decode_English(char English)
+		{
+			switch (English)
+			{
+				case 'a':
+					return ".-";
+				case 'b':
+					return "-...";
+				case 'c':
+					return "-.-.";
+				case 'd':
+					return "-..";
+				case 'e':
+					return ".";
+				case 'f':
+					return "..-.";
+				case 'g':
+					return "--.";
+				case 'h':
+					return "....";
+				case 'i':
+					return "..";
+				case 'j':
+					return ".---";
+				case 'k':
+					return "-.-";
+				case 'l':
+					return ".-..";
+				case 'm':
+					return "--";
+				case 'n':
+					return "-.";
+				case 'o':
+					return "---";
+				case 'p':
+					return ".--.";
+				case 'q':
+					return "--.-";
+				case 'r':
+					return ".-.";
+				case 's':
+					return "...";
+				case 't':
+					return "-";
+				case 'u':
+					return "..-";
+				case 'v':
+					return "...-";
+				case 'w':
+					return ".--";
+				case 'x':
+					return "-..-";
+				case 'y':
+					return "-.--";
+				case 'z':
+					return "--..";
+				case '1':
+					return ".----";
+				case '2':
+					return "..---";
+				case '3':
+					return "...--";
+				case '4':
+					return "....-";
+				case '5':
+					return ".....";
+				case '6':
+					return "-....";
+				case '7':
+					return "--...";
+				case '8':
+					return "---..";
+				case '9':
+					return "----.";
+				case '0':
+					return "-----";
+				default:
+					return " ";
 			}
 		}
 	}
