@@ -37,6 +37,11 @@ namespace Speed
 		_deck.Add("clovers", cards);
 		_deck.Add("diamonds", cards);
 
+		//Methods to:
+		// - Initiate player 1
+		// - Initiate computer player
+		// - Replace card1 and card2
+
 
 		public static void Main() 
 		{
@@ -56,6 +61,12 @@ namespace Speed
 		private string[] _cards;
 		// Cards to replace used cards in your hand 
 		private string[] _stack;
+
+		//Methods to:
+		// - Place a card
+		// - Refill hand
+		// - See hand
+		// - Declare "have no matches" to get new cards
 
 	}
 }
