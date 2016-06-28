@@ -34,7 +34,7 @@ namespace Speed
 		string[] cards = {"1","2","3","4","5","6","7","8","9","10","jack","queen","king", "ace"};
 		_deck.Add("hearts", cards);
 		_deck.Add("spades", cards);
-		_deck.Add("clovers", cards);
+		_deck.Add("clubs", cards);
 		_deck.Add("diamonds", cards);
 
 		//Methods to:
