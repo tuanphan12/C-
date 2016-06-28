@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Speed
 {
@@ -27,12 +29,22 @@ namespace Speed
 		// Replaces second card if no match
 		private string[] _stack2;
 		// All of the cards known to no longer in the game
-		private string[] _deck;
+		public Dictionary<string,string[]> _deck;
+		Dictionary<string,string[]> _deck = new Dictionary<string,string[]>();
+		string[] cards = {"1","2","3","4","5","6","7","8","9","10","jack","queen","king", "ace"};
+		_deck.Add("hearts", cards);
+		_deck.Add("spades", cards);
+		_deck.Add("clovers", cards);
+		_deck.Add("diamonds", cards);
 
 
 		public static void Main() 
 		{
 			Console.WriteLine("Let's build speed!");
+			foreach (string suit in _deck.Keys)
+			{
+			    Console.WriteLine("{0}: {1}", suit, string.Join(", ",_deck[suit]));
+			}
 		}
 
 
