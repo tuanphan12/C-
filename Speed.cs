@@ -4,22 +4,8 @@ using System.Collections.Generic;
 
 namespace Speed
 {
-	class Game 
+	public class Game 
 	{
-		// Who is in the game
-		private Player _player1;
-		public Player Player1
-		{
-			get 
-			{
-				return _player1;
-			}
-			set 
-			{
-				_player1 = value;
-			}
-
-		}
 		// First card to match
 		private string _card1;
 		// Replaces first card if no match
@@ -29,33 +15,49 @@ namespace Speed
 		// Replaces second card if no match
 		private string[] _stack2;
 		// All of the cards known to no longer in the game
-		public Dictionary<string,string[]> _deck;
-		Dictionary<string,string[]> _deck = new Dictionary<string,string[]>();
-		string[] cards = {"1","2","3","4","5","6","7","8","9","10","jack","queen","king", "ace"};
-		_deck.Add("hearts", cards);
-		_deck.Add("spades", cards);
-		_deck.Add("clubs", cards);
-		_deck.Add("diamonds", cards);
+		private Dictionary<string,string[]> _deck;
 
+		public void InitDeck()
+		{
+			Dictionary<string, string[]> deck = new Dictionary<string, string[]>();
+			string[] cards = {"1","2","3","4","5","6","7","8","9","10","jack","queen","king", "ace"};
+			deck.Add("hearts", cards);
+			deck.Add("spades", cards);
+			deck.Add("clubs", cards);
+			deck.Add("diamonds", cards);
+			this._deck = deck;
+		}
+
+		public void SetUp()
+		{
+			InitDeck();
+			foreach (string suit in this._deck.Keys)
+			{
+				Console.WriteLine("{0}: {1}", suit, string.Join(", ",this._deck[suit]));
+			}
+		}
 		//Methods to:
 		// - Initiate player 1
 		// - Initiate computer player
 		// - Replace card1 and card2
 
+	}
 
+	public class PlayingGame
+	{
+		
 		public static void Main() 
 		{
 			Console.WriteLine("Let's build speed!");
-			foreach (string suit in _deck.Keys)
-			{
-			    Console.WriteLine("{0}: {1}", suit, string.Join(", ",_deck[suit]));
-			}
+			Game g = new Game();
+			g.SetUp();
+			
 		}
 
 
 	}
 
-	class Player 
+	public class Player 
 	{
 		// Cards in your hand
 		private string[] _cards;
