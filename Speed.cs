@@ -9,7 +9,7 @@ namespace Speed
 	public static class CommonMethods 
 	{
 
-		// Deals a given amount or cards randomly from a given original deck
+		/// Deals a given amount or cards randomly from a given original deck
 		public static List<Tuple<string, int>> Deal(List<Tuple<string, int>> original, int numCards, HashSet<int> check) 
 		{
 			Random r = new Random();
@@ -26,7 +26,7 @@ namespace Speed
 			return thisStack;
 		}
 
-		// Converts card list to dictionary and returns
+		/// Converts card list to dictionary and returns
 		public static Dictionary<string, List<int>> AsDictionary(List<Tuple<string, int>> original)
 		{
 			// Initialize variables to use later
@@ -53,17 +53,14 @@ namespace Speed
 
 		}
 
-		// Views card list as dictionary to make it easier to see
+		/// Views card list as dictionary to make it easier to see
 		public static void ViewCards(List<Tuple<string, int>> original) 
 		{
-			// Initialize variables to use later
+			// Gets dictionary of cards
 			Dictionary<string, List<int>> asDictionary = AsDictionary(original);
 			
 			// Print out cards to console
-			foreach (string suit in asDictionary.Keys)
-			{
-				Console.WriteLine("{0}: {1}", suit, string.Join(", ",asDictionary[suit]));
-			}
+			foreach (string suit in asDictionary.Keys) { Console.WriteLine("{0}: {1}", suit, string.Join(", ",asDictionary[suit])); }
 		}
 	}
 
@@ -71,59 +68,113 @@ namespace Speed
 	{
 		// First card to match
 		private string _card1;
+		public string Card1
+		{
+			get { return this._card1; }
+			set { this._card1 = value; }
+		}
 		// Replaces first card if no match
-		private List<Tuple<string,int>> _stack1;
+		private List<Tuple<string, int>> _stack1;
+		public List<Tuple<string, int>> Stack1
+		{
+			get { return this._stack1; }
+			set { this._stack1 = value; }
+		}
 		// Second card to match
 		private string _card2;
+		public string Card2
+		{
+			get { return this._card2; }
+			set { this._card2 = value; }
+		}
 		// Replaces second card if no match
-		private List<Tuple<string,int>> _stack2;
+		private List<Tuple<string, int>> _stack2;
+		public List<Tuple<string, int>> Stack2
+		{
+			get { return this._stack2; }
+			set { this._stack2 = value; }
+		}
 		// All of the cards in the game
-		private List<Tuple<string,int>> cardList;
+		private List<Tuple<string, int>> _deck;
+		public List<Tuple<string, int>> Deck
+		{
+			get { return this._deck; }
+			set { this._deck = value; }
+		}
 		// Player
-		public Player _player1;
+		private Player _player1;
+		public Player Player1
+		{
+			get { return this._player1; }
+			set { this._player1 = value; }
+		}
 		// Computer
-		public Player _player2;
+		private Player _player2;
+		public Player Player2
+		{
+			get { return this._player2; }
+			set { this._player2 = value; }
+		}
 
 
 		public void InitDeck()
 		{
 			//Makes a tuple for each card (suit,value)
-			var cardlist2 = new List<Tuple<string, int>>
+			var cardlist = new List<Tuple<string, int>>
 			{
 				Tuple.Create("h", 1), Tuple.Create("h", 2), Tuple.Create("h", 3), Tuple.Create("h", 4), Tuple.Create("h", 5), Tuple.Create("h", 6), Tuple.Create("h", 7), Tuple.Create("h", 8), Tuple.Create("h", 9), Tuple.Create("h", 10), Tuple.Create("h", 11), Tuple.Create("h", 12), Tuple.Create("h", 13),
 				Tuple.Create("s", 1), Tuple.Create("s", 2), Tuple.Create("s", 3), Tuple.Create("s", 4), Tuple.Create("s", 5), Tuple.Create("s", 6), Tuple.Create("s", 7), Tuple.Create("s", 8), Tuple.Create("s", 9), Tuple.Create("s", 10), Tuple.Create("s", 11), Tuple.Create("s", 12), Tuple.Create("s", 13),
 				Tuple.Create("c", 1), Tuple.Create("c", 2), Tuple.Create("c", 3), Tuple.Create("c", 4), Tuple.Create("c", 5), Tuple.Create("c", 6), Tuple.Create("c", 7), Tuple.Create("c", 8), Tuple.Create("c", 9), Tuple.Create("c", 10), Tuple.Create("c", 11), Tuple.Create("c", 12), Tuple.Create("c", 13),
 				Tuple.Create("d", 1), Tuple.Create("d", 2), Tuple.Create("d", 3), Tuple.Create("d", 4), Tuple.Create("d", 5), Tuple.Create("d", 6), Tuple.Create("d", 7), Tuple.Create("d", 8), Tuple.Create("d", 9), Tuple.Create("d", 10), Tuple.Create("d", 11), Tuple.Create("d", 12), Tuple.Create("d", 13)
 			};
-			this.cardList = cardlist2;
+			Deck = cardlist;
 
 			HashSet<int> check = new HashSet<int>();
 			
-			this._stack1 = CommonMethods.Deal(this.cardList,6,check);
-			this._stack2 = CommonMethods.Deal(this.cardList,6,check);
-			this._player1.Stack = CommonMethods.Deal(this.cardList,20,check);
-			this._player1.InitHand();
-			this._player2.Stack = CommonMethods.Deal(this.cardList,20,check);
-			this._player2.InitHand();
+			Stack1 = CommonMethods.Deal(Deck,6,check);
+			Stack2 = CommonMethods.Deal(Deck,6,check);
+			Player1.Stack = CommonMethods.Deal(Deck,20,check);
+			Player1.InitHand();
+			Player2.Stack = CommonMethods.Deal(Deck,20,check);
+			Player2.InitHand();
 
  
 		}
 
-		public void SetUp()
+		public void NewGame()
 		{
+			Player player1 = new Player();
+			Player player2 = new Player();
+			Player1 = player1;
+			Player2 = player2;
 			InitDeck();
-			CommonMethods.ViewCards(this.cardList);
-			Console.WriteLine("Now Stack1: ");
-			CommonMethods.ViewCards(this._stack1);
-			Console.WriteLine("Now Stack2: ");
-			CommonMethods.ViewCards(this._stack2);
-
+			Console.WriteLine("Hello contestant! What's your name?: ");
+			var name = Console.ReadLine();
+			player1.Name = name;
+			Console.WriteLine("Hello, {0}, here is your hand!",player1.Name);
+			CommonMethods.ViewCards(player1.Hand);
 			
+			while (true) 
+			{
+				// Press a to refill your hand
+				var key = Console.ReadKey();
+				if (key.KeyChar == 'a') 
+				{ 
+					player1.RefillHand();
+
+					Console.WriteLine("\nHand: ");
+					player1.SeeHand();
+				}
+				//Press s to get rid of a card
+				if (key.KeyChar == 's')
+				{
+					player1.PlayCard();
+
+					Console.WriteLine("\nHand: ");
+					player1.SeeHand();
+				}
+			}
 		}
-		//Methods to:
-		// - Initiate player 1
-		// - Initiate computer player
-		// - Replace card1 and card2
 
 	}
 
@@ -159,11 +210,7 @@ namespace Speed
 		}
 
 		//--METHODS--------------------
-		//Methods to:
-		// - Place a card
-		// - Refill hand
-		// - See hand
-		// - Declare "have no matches" to get new cards
+
 		public void InitHand() 
 		{
 			HashSet<int> check = new HashSet<int>();	
@@ -172,6 +219,14 @@ namespace Speed
 			{
 				Stack.Remove(card);
 			}
+		}
+
+		public void SeeHand() { CommonMethods.ViewCards(Hand); }
+
+		public void AdmitDefeat() 
+		{
+			Console.WriteLine("\n\n{0} wants to see a new card!");
+			NoMatches = true;
 		}
 
 		public void RefillHand()
@@ -186,44 +241,33 @@ namespace Speed
 			}
 			else 
 			{
-				Console.WriteLine("Your hand is already full!");
+				Console.WriteLine("\n\nYour hand is already full!");
 			}
+			return;
 		}	
 		public void PlayCard()
 		{
 			Dictionary<string, List<int>> allCards = CommonMethods.AsDictionary(Hand);
-			var key1 = Console.ReadKey();
+			Console.Write("\n\nSuit: ");
+			var suit_str = Console.ReadKey();
+			var suit = suit_str.KeyChar.ToString();
 			List<string> suits = new List<string>(new string[] {"h", "s", "c", "d"}); 
-			string suit = Char.ToString(key1.KeyChar);
 			if (!suits.Contains(suit))
 			{
-				Console.WriteLine("You don't have that card!");
+				Console.WriteLine("\n\nYou don't have that card!");
 				return;
 			}
-			int value = new int();
-			var key2 = Console.ReadKey();
-			var key3 = Console.ReadKey();
-
-			if (key2.KeyChar == '1') 
+			Console.Write("\nValue: ");
+			var value_str = Console.ReadLine();
+			var value = Convert.ToInt32(value_str);
+			Tuple<string, int> card = new Tuple<string, int>(suit, value);
+			if (allCards[suit].Contains(value))
 			{
-				if (key3.KeyChar == '0') { value = 10; }
-				else if (key3.KeyChar == '1') { value = 11; }
-				else if (key3.KeyChar == '2') { value = 12; }
-				else if (key3.KeyChar == '3') { value = 13; }
+				Hand.Remove(card);
 			}
-			else if (key2.KeyChar == '0')
+			else 
 			{
-				value = (int)Char.GetNumericValue(key3.KeyChar);
-			}
-			Tuple<string, int> choice = new Tuple<string, int>(suit, value);
-			if (allCards[suit].Contains(value)) 
-			{
-				Hand.Remove(choice);
-			}
-			else
-			{
-				Console.WriteLine("You don't have that card!");
-				return;
+				Console.WriteLine("\n\nYou don't have that card!");
 			}
 			return;
 		}	
@@ -234,42 +278,14 @@ namespace Speed
 	{		
 		public static void Main() 
 		{
-			Console.WriteLine("Let's play speed!");
-			Player player1 = new Player();
-			Player player2 = new Player();
-			Game game = new Game();
-			game._player1 = player1;
-			game._player2 = player2;
-			game.SetUp();
-			Console.WriteLine("What's your name?: ");
-			var name = Console.ReadLine();
-			player1.Name = name;
-			Console.WriteLine("Hello, {0}, here is your deck!",player1.Name);
-			CommonMethods.ViewCards(player1.Stack);
-			Console.WriteLine("And this is your hand!");
-			CommonMethods.ViewCards(player1.Hand);
-			while (true) 
+			Console.WriteLine("Do you want to play Speed?:(y/n) ");
+			var ans = Console.ReadLine();
+			if (ans == "y") 
 			{
-				var key = Console.ReadKey();
-				if (key.KeyChar == 'a') 
-				{ 
-					player1.RefillHand();
-
-					Console.WriteLine("\nHand: ");
-					CommonMethods.ViewCards(player1.Hand);
-					Console.WriteLine("Taken from this stack: ");
-					CommonMethods.ViewCards(player1.Stack);
-				}
-				if (key.KeyChar == 's')
-				{
-					player1.PlayCard();
-
-					Console.WriteLine("\nHand: ");
-					CommonMethods.ViewCards(player1.Hand);
-					Console.WriteLine("Taken from this stack: ");
-					CommonMethods.ViewCards(player1.Stack);
-				}
+				Game game = new Game();
+				game.NewGame();
 			}
+			
 			
 		}
 
