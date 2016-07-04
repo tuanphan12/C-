@@ -238,6 +238,28 @@ namespace Speed
 			CommonMethods.ViewHand(Player1);
 		}
 
+		public void EndGame()
+		{
+			string winner;
+			int p1CardsLeft = Player1.Hand.Count + Player1.Stack.Count;
+			int p2CardsLeft = Player2.Hand.Count + Player2.Stack.Count;
+			if (Player1._finished || (p1CardsLeft < p2CardsLeft))
+			{
+				winner = Player1.Name;
+			}
+			else
+			{
+				winner = Player2.Name;
+			}
+			CommonMethods.Type("Looks like our winner is.....");CommonMethods.Type(winner);CommonMethods.Type("!!!");
+			Console.WriteLine("\n\n ----End game stats--- ");
+			Console.WriteLine("{0}'s remaining cards: ",Player1.Name);
+			CommonMethods.ViewHand(Player1, true);
+			Console.WriteLine("{0}'s remaining cards: ",Player2.Name);
+			CommonMethods.ViewHand(Player2, true);
+
+		}
+
 		// Where each game takes place
 		public void NewGame()
 		{
@@ -302,6 +324,13 @@ namespace Speed
 					NewCards();
 					timer.Start();
 				}
+				if (player1._finished || player2._finished || _gameOver)
+				{
+					timer.Stop();
+					break;
+				}
+				EndGame();
+
 			}
 		}
 
