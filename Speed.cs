@@ -59,18 +59,15 @@ namespace Speed
 			// Gets dictionary of cards
 			var original = player.Hand;
 			Dictionary<string, List<int>> asDictionary = AsDictionary(original);
-
+			// Debugging mode shows the cards in the player's stack as well as their hand
 			if (debugging) 
 			{
 				var deck = player.Stack;
 				Dictionary<string, List<int>> asDictionary2 = AsDictionary(deck);
-				foreach (string suit in asDictionary.Keys) 
-				{ 
-					Console.WriteLine("{0}: {1} ({2})", suit, string.Join(", ",asDictionary[suit]), string.Join(", ",asDictionary2[suit])); 
-				}
+				foreach (string suit in asDictionary.Keys) { Console.WriteLine("{0}: {1} ({2})", suit, string.Join(", ",asDictionary[suit]), string.Join(", ",asDictionary2[suit])); }
 				return;
 			}
-			// Print out cards to console
+			// Prints out just hand to console
 			foreach (string suit in asDictionary.Keys) { Console.WriteLine("{0}: {1}", suit, string.Join(", ",asDictionary[suit])); }
 		}
 
@@ -260,7 +257,7 @@ namespace Speed
 				//Press s to get rid of a card
 				if (key.KeyChar == 'h' || key.KeyChar == 's' || key.KeyChar == 'c' || key.KeyChar == 'd')
 				{
-					player1.PlayCard(key.KeyChar);
+					player1.PlayCard(key.KeyChar, this);
 
 					CommonMethods.ViewCards(Card1, Card2);
 					CommonMethods.ViewHand(player1,true);
@@ -346,25 +343,27 @@ namespace Speed
 		}
 
 		//Tries to put a card in play
-		public void PlayCard(char suit_char)
+		public void PlayCard(char suit_char, Game game)
 		{
+			// Are there even any cards in your hand you can play?
 			if (Hand.Count == 0) 
 			{ 
 				Console.WriteLine("\nYou don't have any cards, draw new ones!"); 
 				return;
 			}
 			
+			// Checks if suit is valid
 			string suit = suit_char.ToString();
-			Console.Write("\n\nSuit: {0}, Value: ", suit);
-
 			Dictionary<string, List<int>> allCards = CommonMethods.AsDictionary(Hand);
-			List<string> suits = new List<string>(new string[] {"h", "s", "c", "d"}); 
-			if (!suits.Contains(suit))
+
+			if (allCards[suit].Count == 0)
 			{
 				Console.WriteLine("\n\nYou don't have that card!");
 				return;
 			}
 
+			//Checks if value is valid
+			Console.Write("\n\nSuit: {0}, Value: ", suit);
 			string value_str = Console.ReadLine();
 			int value = Convert.ToInt32(value_str);
 
@@ -373,9 +372,31 @@ namespace Speed
 			{
 				Console.WriteLine("\n\nYou don't have that card!");
 				return;
-			}	
+			}
+
+			// Check if there is a match
+			var compare1 = game.Card1.Item2;
+			var compare2 = game.Card2.Item2;
+			if (value == 13)
+			{
+				if (compare1 == 1 || compare1 == 12) { game.Card1 = card; }
+				else if (compare2 == 1 || compare2 == 12) { game.Card2 = card; } 
+				else { Console.WriteLine("\n\nThat card isn't a match!"); return; }	
+			}
+			else if (value == 1)
+			{
+				if (compare1 == 13 || compare1 == 2) { game.Card1 = card; }
+				else if (compare2 == 13 || compare2 == 2) { game.Card2 = card; } 
+				else { Console.WriteLine("\n\nThat card isn't a match!"); return; }	
+			}
+			else 
+			{
+				if (value == compare1 + 1 || value == compare1 - 1) { game.Card1 = card; }
+				else if (value == compare2 + 1 || value == compare2 - 1) { game.Card2 = card; } 
+				else { Console.WriteLine("\n\nThat card isn't a match!"); return; }
+			}
 			Hand.Remove(card);
-			return;
+				
 		}	
 
 	}
