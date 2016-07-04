@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using System.Timers;
 
 namespace Speed
 {
@@ -227,6 +228,14 @@ namespace Speed
 			CommonMethods.ViewHand(Player1);
 		}
 
+		public void Player2Turn(object source, ElapsedEventArgs e) 
+		{
+			Player2.ComputerTurn(this);
+
+			CommonMethods.ViewCards(Card1, Card2);
+			CommonMethods.ViewHand(Player1);
+		}
+
 		// Where each game takes place
 		public void NewGame()
 		{
@@ -239,9 +248,17 @@ namespace Speed
 			CommonMethods.Type("Hello contestant! What's your name?: ");
 			var name = Console.ReadLine();
 			player1.Name = name;
+			player2.Name = "Computer";
 			CommonMethods.Type("Hello, ");CommonMethods.Type(player1.Name);CommonMethods.Type(", here is your hand!\n"); Thread.Sleep(500);
 			CommonMethods.ViewHand(player1); Thread.Sleep(500);
 			NewCards();
+
+			// Initialize timer for player2
+			System.Timers.Timer timer = new System.Timers.Timer();
+			timer.Elapsed += new ElapsedEventHandler(Player2Turn);
+			timer.Interval = 2000;
+			timer.Enabled = true;
+
 			
 			while (true) 
 			{
@@ -249,18 +266,39 @@ namespace Speed
 				var key = Console.ReadKey();
 				if (key.KeyChar == 'a') 
 				{ 
+					timer.Stop();
 					player1.RefillHand();
 
+					timer.Start();
 					CommonMethods.ViewCards(Card1, Card2);
 					CommonMethods.ViewHand(player1);
 				}
 				//Press s to get rid of a card
 				if (key.KeyChar == 'h' || key.KeyChar == 's' || key.KeyChar == 'c' || key.KeyChar == 'd')
 				{
+					timer.Stop();
 					player1.PlayCard(key.KeyChar, this);
 
+					timer.Start();
 					CommonMethods.ViewCards(Card1, Card2);
 					CommonMethods.ViewHand(player1);
+				}
+				// Press p to ask for new cards
+				if (key.KeyChar == 'p') 
+				{ 
+					timer.Stop();
+					player1.AdmitDefeat();
+
+					timer.Start();
+					CommonMethods.ViewCards(Card1, Card2);
+					CommonMethods.ViewHand(player1);
+				}
+
+				if (player1._noMatches == true && _player2._noMatches == true)
+				{
+					timer.Stop();
+					NewCards();
+					timer.Start();
 				}
 			}
 		}
@@ -319,7 +357,7 @@ namespace Speed
 		}
 
 		//Replaces cards that are missing in hand
-		public void RefillHand()
+		public bool RefillHand()
 		{
 			HashSet<int> check = new HashSet<int>();
 			List<Tuple<string, int>> newHand = new  List<Tuple<string, int>>();
@@ -338,8 +376,8 @@ namespace Speed
 				Hand.AddRange(newHand);
 				Hand.OrderBy(v => v).ToList();
 			}
-			else { Console.WriteLine("\n\nYour hand is already full!"); }
-			return;
+			else { Console.WriteLine("\n\nYour hand is already full!"); return false; }
+			return true;
 		}
 
 		//Tries to put a card in play
@@ -367,16 +405,20 @@ namespace Speed
 			string value_str = Console.ReadLine();
 			int value = Convert.ToInt32(value_str);
 
-			Tuple<string, int> card = new Tuple<string, int>(suit, value);
-			if (!allCards[suit].Contains(value))
-			{
-				Console.WriteLine("\n\nYou don't have that card!");
-				return;
-			}
+			if (!allCards[suit].Contains(value)) { Console.WriteLine("\n\nYou don't have that card!"); return; }
 
-			// Check if there is a match
+			// Sees if there is a match
+			CheckIfMatch(suit,value,game);			
+		}
+
+		//Helper for seeing if there is a match with played card
+		public void CheckIfMatch(string suit, int value, Game game)
+		{
+			Tuple<string, int> card = new Tuple<string, int>(suit, value);
+
 			var compare1 = game.Card1.Item2;
 			var compare2 = game.Card2.Item2;
+			// Edge cases (13 and 1) have to be dealt with seperately
 			if (value == 13)
 			{
 				if (compare1 == 1 || compare1 == 12) { game.Card1 = card; }
@@ -396,7 +438,52 @@ namespace Speed
 				else { Console.WriteLine("\n\nThat card isn't a match!"); return; }
 			}
 			Hand.Remove(card);
-				
+		}
+
+		//Code controlled Player 2 sequence
+		public void ComputerTurn(Game game) 
+		{
+			var compare1 = game.Card1.Item2;
+			var compare2 = game.Card2.Item2;
+
+			string chosenSuit = "none";
+			int chosenValue = 0;
+			//1. See if you can play a card
+			foreach (Tuple<string, int> card in Hand)
+			{
+				string suit = card.Item1;
+				int value = card.Item2;
+				if (value == 13)
+				{
+					if (compare1 == 1 || compare1 == 12) { chosenSuit = suit; chosenValue = value; break; }
+					else if (compare2 == 1 || compare2 == 12) { chosenSuit = suit; chosenValue = value; break; } 
+					else { continue; }	
+				}
+				else if (value == 1)
+				{
+					if (compare1 == 13 || compare1 == 2) { chosenSuit = suit; chosenValue = value; break; }
+					else if (compare2 == 13 || compare2 == 2) { chosenSuit = suit; chosenValue = value; break; } 
+					else { continue; }	
+				}
+				else 
+				{
+					if (value == compare1 + 1 || value == compare1 - 1) { chosenSuit = suit; chosenValue = value; break; }
+					else if (value == compare2 + 1 || value == compare2 - 1) { chosenSuit = suit; chosenValue = value; break; } 
+					else { continue; }
+				}
+			}
+
+			if (chosenSuit != "none") 
+			{
+				Console.WriteLine("\n\n{0} has placed a card!", Name);
+				CheckIfMatch(chosenSuit, chosenValue, game);
+				return;
+			}
+
+			//2. If you can't play a card, try refilling hand
+			if (RefillHand()) { Console.WriteLine("\n\n{0} has refilled their hand!", Name); return; }
+			//3. If you can't do either, AdmitDefeat
+			else { AdmitDefeat(); }
 		}	
 
 	}
