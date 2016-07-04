@@ -252,7 +252,7 @@ namespace Speed
 					player1.RefillHand();
 
 					CommonMethods.ViewCards(Card1, Card2);
-					CommonMethods.ViewHand(player1,true);
+					CommonMethods.ViewHand(player1);
 				}
 				//Press s to get rid of a card
 				if (key.KeyChar == 'h' || key.KeyChar == 's' || key.KeyChar == 'c' || key.KeyChar == 'd')
@@ -260,7 +260,7 @@ namespace Speed
 					player1.PlayCard(key.KeyChar, this);
 
 					CommonMethods.ViewCards(Card1, Card2);
-					CommonMethods.ViewHand(player1,true);
+					CommonMethods.ViewHand(player1);
 				}
 			}
 		}
