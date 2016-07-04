@@ -226,6 +226,8 @@ namespace Speed
 			CommonMethods.Countdown();
 			CommonMethods.ViewCards(Card1,Card2);
 			CommonMethods.ViewHand(Player1);
+			Player1._noMatches = false;
+			Player2._noMatches = false;
 		}
 
 		public void Player2Turn(object source, ElapsedEventArgs e) 
