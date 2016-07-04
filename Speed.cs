@@ -216,8 +216,11 @@ namespace Speed
 			if (Stack1.Count == 0) 
 			{ 
 				CommonMethods.Type("\n\nNo more cards! Let's see who won...\n\n");
-				this._gameOver = true; 
+				this._gameOver = true;
+				return; 
 			}
+			Player1._noMatches = false;
+			Player2._noMatches = false;
 			// Draw new card from each stack
 			HashSet<int> check1 = new HashSet<int>(); HashSet<int> check2 = new HashSet<int>();
 			Card1 = CommonMethods.Deal(Stack1,1,check1)[0]; Card2 = CommonMethods.Deal(Stack2,1,check2)[0];
@@ -226,8 +229,6 @@ namespace Speed
 			CommonMethods.Countdown();
 			CommonMethods.ViewCards(Card1,Card2);
 			CommonMethods.ViewHand(Player1);
-			Player1._noMatches = false;
-			Player2._noMatches = false;
 		}
 
 		public void Player2Turn(object source, ElapsedEventArgs e) 
@@ -280,7 +281,7 @@ namespace Speed
 			// Initialize timer for player2
 			System.Timers.Timer timer = new System.Timers.Timer();
 			timer.Elapsed += new ElapsedEventHandler(Player2Turn);
-			timer.Interval = 2000;
+			timer.Interval = 1000;
 			timer.Enabled = true;
 
 			
@@ -329,9 +330,8 @@ namespace Speed
 					timer.Stop();
 					break;
 				}
-				EndGame();
-
 			}
+			EndGame();
 		}
 
 	}
@@ -398,6 +398,7 @@ namespace Speed
 				{
 					CommonMethods.Type(Name);CommonMethods.Type(" has finished their cards!");
 					this._finished = true;
+					return false;
 				}
 				else if (Stack.Count != 0 && Stack.Count < 4) { newHand = CommonMethods.Deal(Stack,(Stack.Count),check); }
 				else { newHand = CommonMethods.Deal(Stack,(4 - Hand.Count),check); }
