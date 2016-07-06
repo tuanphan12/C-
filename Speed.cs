@@ -234,7 +234,7 @@ namespace Speed
 		public void Player2Turn(object source, ElapsedEventArgs e) 
 		{
 			Player2.ComputerTurn(this);
-
+			
 			CommonMethods.ViewCards(Card1, Card2);
 			CommonMethods.ViewHand(Player1);
 		}
@@ -273,15 +273,17 @@ namespace Speed
 			CommonMethods.Type("Hello contestant! What's your name?: ");
 			var name = Console.ReadLine();
 			player1.Name = name;
-			player2.Name = "Computer";
-			CommonMethods.Type("Hello, ");CommonMethods.Type(player1.Name);CommonMethods.Type(", here is your hand!\n"); Thread.Sleep(500);
+			CommonMethods.Type("Now what do you want your opponent to be called?: ");
+			var name2 = Console.ReadLine();
+			player2.Name = name2;
+			CommonMethods.Type("Alright, ");CommonMethods.Type(player1.Name);CommonMethods.Type(", here is your hand!\n"); Thread.Sleep(500);
 			CommonMethods.ViewHand(player1); Thread.Sleep(500);
 			NewCards();
 
 			// Initialize timer for player2
 			System.Timers.Timer timer = new System.Timers.Timer();
 			timer.Elapsed += new ElapsedEventHandler(Player2Turn);
-			timer.Interval = 1000;
+			timer.Interval = 500;
 			timer.Enabled = true;
 
 			
@@ -475,6 +477,13 @@ namespace Speed
 		//Code controlled Player 2 sequence
 		public void ComputerTurn(Game game) 
 		{
+			if (this._finished) 
+			{
+				Console.WriteLine("Already done");
+				game._gameOver = true;
+				return;
+			}
+
 			var compare1 = game.Card1.Item2;
 			var compare2 = game.Card2.Item2;
 
@@ -527,10 +536,12 @@ namespace Speed
 		{
 			CommonMethods.Type("Do you want to play Speed?:(y/n) ");
 			var ans = Console.ReadLine();
-			if (ans == "y") 
+			while (ans == "y") 
 			{
 				Game game = new Game();
 				game.NewGame();
+				CommonMethods.Type("\nWant to play again?: ");
+				ans = Console.ReadLine();
 			}
 			
 			
