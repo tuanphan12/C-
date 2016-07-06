@@ -186,7 +186,6 @@ namespace Speed
 		// Game is over
 		public bool _gameOver = false;
 
-
 		// Makes a deck of cards as tuples and deals some out to each player and each stack
 		public void InitDeck()
 		{
@@ -213,24 +212,23 @@ namespace Speed
 		public void NewCards() 
 		{
 			// If there are no cards left to draw from, the game ends
-			if (Stack1.Count == 0) 
-			{ 
-				CommonMethods.Type("\n\nNo more cards! Let's see who won...\n\n");
-				this._gameOver = true;
-				return; 
-			}
-			Player1._noMatches = false;
-			Player2._noMatches = false;
+			if (Stack1.Count == 0) { CommonMethods.Type("\n\nNo more cards! Let's see who won...\n\n"); this._gameOver = true; return; }
+			
+			// Reset no matches for each player because there are new cards
+			Player1._noMatches = false; Player2._noMatches = false;
+			
 			// Draw new card from each stack
 			HashSet<int> check1 = new HashSet<int>(); HashSet<int> check2 = new HashSet<int>();
 			Card1 = CommonMethods.Deal(Stack1,1,check1)[0]; Card2 = CommonMethods.Deal(Stack2,1,check2)[0];
 			Stack1.Remove(Card1); Stack2.Remove(Card2);
+			
 			// Viewing sequence with new cards
 			CommonMethods.Countdown();
 			CommonMethods.ViewCards(Card1,Card2);
 			CommonMethods.ViewHand(Player1);
 		}
 
+		// This gets called whenever timer goes off, lets Player 2 have turn
 		public void Player2Turn(object source, ElapsedEventArgs e) 
 		{
 			Player2.ComputerTurn(this);
@@ -239,36 +237,31 @@ namespace Speed
 			CommonMethods.ViewHand(Player1);
 		}
 
+		// Called when game is over
 		public void EndGame()
 		{
 			string winner;
 			int p1CardsLeft = Player1.Hand.Count + Player1.Stack.Count;
 			int p2CardsLeft = Player2.Hand.Count + Player2.Stack.Count;
-			if (Player1._finished || (p1CardsLeft < p2CardsLeft))
-			{
-				winner = Player1.Name;
-			}
-			else
-			{
-				winner = Player2.Name;
-			}
+
+			// Decide a winner
+			if (Player1._finished || (p1CardsLeft < p2CardsLeft)) { winner = Player1.Name; }
+			else { winner = Player2.Name; }
+
+			// Print winner and stats
 			CommonMethods.Type("Looks like our winner is.....");CommonMethods.Type(winner);CommonMethods.Type("!!!");
 			Console.WriteLine("\n\n ----End game stats--- ");
-			Console.WriteLine("{0}'s remaining cards: ",Player1.Name);
-			CommonMethods.ViewHand(Player1, true);
-			Console.WriteLine("{0}'s remaining cards: ",Player2.Name);
-			CommonMethods.ViewHand(Player2, true);
-
+			
+			Console.WriteLine("{0}'s remaining cards: ",Player1.Name); CommonMethods.ViewHand(Player1, true);
+			Console.WriteLine("{0}'s remaining cards: ",Player2.Name); CommonMethods.ViewHand(Player2, true);
 		}
 
 		// Where each game takes place
 		public void NewGame()
 		{
-			//Initializing stuff
-			Player player1 = new Player();
-			Player player2 = new Player();
-			Player1 = player1;
-			Player2 = player2;
+			//Initializing players and game
+			Player player1 = new Player(); Player player2 = new Player();
+			Player1 = player1; Player2 = player2;
 			InitDeck();
 			CommonMethods.Type("Hello contestant! What's your name?: ");
 			var name = Console.ReadLine();
@@ -289,8 +282,9 @@ namespace Speed
 			
 			while (true) 
 			{
-				// Press a to refill your hand
 				var key = Console.ReadKey();
+
+				// Press a to refill your hand
 				if (key.KeyChar == 'a') 
 				{ 
 					timer.Stop();
@@ -300,7 +294,7 @@ namespace Speed
 					CommonMethods.ViewCards(Card1, Card2);
 					CommonMethods.ViewHand(player1);
 				}
-				//Press s to get rid of a card
+				//Press suit letter to get rid of a card
 				if (key.KeyChar == 'h' || key.KeyChar == 's' || key.KeyChar == 'c' || key.KeyChar == 'd')
 				{
 					timer.Stop();
@@ -322,12 +316,15 @@ namespace Speed
 					CommonMethods.ViewHand(player1);
 				}
 
+				// If players both need card, get new cards
 				if (player1._noMatches == true && _player2._noMatches == true)
 				{
 					timer.Stop();
 					NewCards();
 					timer.Start();
 				}
+
+				//If cards run out, game over
 				if (player1._finished || player2._finished || _gameOver)
 				{
 					timer.Stop();
@@ -380,9 +377,6 @@ namespace Speed
 			foreach (Tuple<string, int> card in Hand) { Stack.Remove(card); }
 		}
 
-		//Shows Hand -- Kind of redundant
-		public void SeeHand() { CommonMethods.ViewHand(this); }
-
 		//No cards that match
 		public void AdmitDefeat() 
 		{
@@ -419,21 +413,13 @@ namespace Speed
 		public void PlayCard(char suit_char, Game game)
 		{
 			// Are there even any cards in your hand you can play?
-			if (Hand.Count == 0) 
-			{ 
-				Console.WriteLine("\nYou don't have any cards, draw new ones!"); 
-				return;
-			}
+			if (Hand.Count == 0) { Console.WriteLine("\nYou don't have any cards, draw new ones!"); return; }
 			
 			// Checks if suit is valid
 			string suit = suit_char.ToString();
 			Dictionary<string, List<int>> allCards = CommonMethods.AsDictionary(Hand);
 
-			if (allCards[suit].Count == 0)
-			{
-				Console.WriteLine("\n\nYou don't have that card!");
-				return;
-			}
+			if (allCards[suit].Count == 0) { Console.WriteLine("\n\nYou don't have that card!"); return; }
 
 			//Checks if value is valid
 			Console.Write("\n\nSuit: {0}, Value: ", suit);
@@ -453,6 +439,7 @@ namespace Speed
 
 			var compare1 = game.Card1.Item2;
 			var compare2 = game.Card2.Item2;
+
 			// Edge cases (13 and 1) have to be dealt with seperately
 			if (value == 13)
 			{
@@ -478,12 +465,8 @@ namespace Speed
 		//Code controlled Player 2 sequence
 		public void ComputerTurn(Game game) 
 		{
-			if (this._finished) 
-			{
-				Console.WriteLine("Already done");
-				game._gameOver = true;
-				return;
-			}
+			// Checks if player 2 is already done
+			if (this._finished) { game._gameOver = true; return; }
 
 			var compare1 = game.Card1.Item2;
 			var compare2 = game.Card2.Item2;
@@ -535,13 +518,13 @@ namespace Speed
 	{		
 		public static void Main() 
 		{
-			CommonMethods.Type("Do you want to play Speed?:(y/n) ");
+			CommonMethods.Type("Do you want to play Speed?(y/n): ");
 			var ans = Console.ReadLine();
 			while (ans == "y") 
 			{
 				Game game = new Game();
 				game.NewGame();
-				CommonMethods.Type("\nWant to play again?: ");
+				CommonMethods.Type("\nWant to play again?(y/n): ");
 				ans = Console.ReadLine();
 			}
 			
