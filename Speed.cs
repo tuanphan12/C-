@@ -186,6 +186,10 @@ namespace Speed
 		// Game is over
 		public bool _gameOver = false;
 
+		
+		//--METHODS--------------------
+
+		
 		// Makes a deck of cards as tuples and deals some out to each player and each stack
 		public void InitDeck()
 		{
@@ -369,6 +373,7 @@ namespace Speed
 
 		//--METHODS--------------------
 
+		
 		//Draws first hand from deck
 		public void InitHand() 
 		{
