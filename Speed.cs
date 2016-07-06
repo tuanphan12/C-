@@ -283,7 +283,7 @@ namespace Speed
 			// Initialize timer for player2
 			System.Timers.Timer timer = new System.Timers.Timer();
 			timer.Elapsed += new ElapsedEventHandler(Player2Turn);
-			timer.Interval = 2000;
+			timer.Interval = 1500;
 			timer.Enabled = true;
 
 			
@@ -403,7 +403,7 @@ namespace Speed
 					this._finished = true;
 					return false;
 				}
-				else if (Stack.Count < Hand.Count && Stack.Count < 4) { newHand = CommonMethods.Deal(Stack,(Stack.Count),check); }
+				else if (Stack.Count < Hand.Count && Stack.Count < 4) { newHand = CommonMethods.Deal(Stack,(4-Stack.Count),check); }
 				else { newHand = CommonMethods.Deal(Stack,(4 - Hand.Count),check); }
 				
 				foreach (Tuple<string, int> card in newHand) { Stack.Remove(card); }
